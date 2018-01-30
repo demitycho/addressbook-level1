@@ -125,7 +125,7 @@ public class AddressBook {
     private static final String COMMAND_EDIT_DESC = "Edits a person's phone number identified by the index number used in "
             + "the last find/list call.";
     private static final String COMMAND_EDIT_PARAMETER = "INDEX";
-    private static final String COMMAND_EDIT_EXAMPLE = COMMAND_EDIT_WORD + " 1 91234567";
+    private static final String COMMAND_EDIT_EXAMPLE = COMMAND_EDIT_WORD + " 1 John Though";
 
     private static final String COMMAND_CLEAR_WORD = "clear";
     private static final String COMMAND_CLEAR_DESC = "Clears address book permanently.";
@@ -538,11 +538,21 @@ public class AddressBook {
         if (!isDisplayIndexValidForLastPersonListingView(targetVisibleIndex)) {
             return MESSAGE_INVALID_PERSON_DISPLAYED_INDEX;
         }
-        return "lol";
-        //return editPersonFromAddressBook(targetInModel) ? getMessageForSuccessfulDelete(targetInModel) // success
-                //: MESSAGE_PERSON_NOT_IN_ADDRESSBOOK; // not found
+        final String targetInModel = extractTargetNameFromEditPersonArgs(commandArgs);
+        String[] old = ALL_PERSONS.get(targetVisibleIndex);
+        old[0] = targetInModel;
+        ALL_PERSONS.set(targetVisibleIndex - 1, old);
+        savePersonsToFile(getAllPersonsInAddressBook(), storageFilePath);
+        return getMessageForSuccessfulEdit(targetVisibleIndex, targetInModel);
+//
+//        return editPersonFromAddressBook(targetInModel) ? getMessageForSuccessfulEdit(targetInModel) // success
+//                : MESSAGE_PERSON_NOT_IN_ADDRESSBOOK; // not found
     }
-
+    //lel
+    private static String extractTargetNameFromEditPersonArgs(String commandArgs){
+        final String[] extractedArgs = commandArgs.trim().split(" ");
+        return extractedArgs[1];
+    }
     /**
      * Checks validity of delete person argument string's format.
      *
@@ -579,7 +589,7 @@ public class AddressBook {
     }
     //Lel
     private static int extractTargetIndexFromEditPersonArgs(String rawArgs) {
-        return Integer.parseInt(rawArgs.trim().split("\\s+")[1]);
+        return Integer.parseInt(rawArgs.trim().split("\\s+")[0]);
     }
     /**
      * Checks that the given index is within bounds and valid for the last shown person list view.
@@ -600,6 +610,11 @@ public class AddressBook {
      */
     private static String getMessageForSuccessfulDelete(String[] deletedPerson) {
         return String.format(MESSAGE_DELETE_PERSON_SUCCESS, getMessageForFormattedPersonData(deletedPerson));
+    }
+    /** lel
+     */
+    private static String getMessageForSuccessfulEdit(int index, String newName){
+        return "Index " + index + "'s name has been changed to " + newName;
     }
 
     /**
