@@ -169,7 +169,7 @@ public class AddressBook {
     /**
      * If the first non-whitespace character in a user's input line is this, that line will be ignored.
      */
-    private static final char EDIT_ARGS = '2';
+    private static final int EDIT_ARGS_LENGTH = 2;
 
     /*
      * This variable is declared for the whole class (instead of declaring it
@@ -534,7 +534,7 @@ public class AddressBook {
         if (!isEditPersonArgsValid(commandArgs)) {
             return getMessageForInvalidCommandInput(COMMAND_EDIT_WORD, getUsageInfoForEditCommand());
         }
-        final int targetVisibleIndex = extractTargetIndexFromDeletePersonArgs(commandArgs);
+        final int targetVisibleIndex = extractTargetIndexFromEditPersonArgs(commandArgs);
         if (!isDisplayIndexValidForLastPersonListingView(targetVisibleIndex)) {
             return MESSAGE_INVALID_PERSON_DISPLAYED_INDEX;
         }
@@ -561,8 +561,8 @@ public class AddressBook {
     //lel
     private static boolean isEditPersonArgsValid(String rawArgs) {
         try {
-            final String[] extractedArgs = rawArgs.trim().split("\\s+"); // use standard libraries to parse
-            return extractedArgs.length >= EDIT_ARGS;
+            final String[] extractedArgs = rawArgs.trim().split(" "); // use standard libraries to parse
+            return extractedArgs.length == EDIT_ARGS_LENGTH;
         } catch (NumberFormatException nfe) {
             return false;
         }
@@ -577,7 +577,10 @@ public class AddressBook {
     private static int extractTargetIndexFromDeletePersonArgs(String rawArgs) {
         return Integer.parseInt(rawArgs.trim());
     }
-
+    //Lel
+    private static int extractTargetIndexFromEditPersonArgs(String rawArgs) {
+        return Integer.parseInt(rawArgs.trim().split("\\s+")[1]);
+    }
     /**
      * Checks that the given index is within bounds and valid for the last shown person list view.
      *
