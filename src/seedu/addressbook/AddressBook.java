@@ -122,10 +122,10 @@ public class AddressBook {
     private static final String COMMAND_DELETE_EXAMPLE = COMMAND_DELETE_WORD + " 1";
 
     private static final String COMMAND_EDIT_WORD = "edit";
-    private static final String COMMAND_EDIT_DESC = "Edits a person identified by the index number used in "
+    private static final String COMMAND_EDIT_DESC = "Edits a person's phone number identified by the index number used in "
             + "the last find/list call.";
     private static final String COMMAND_EDIT_PARAMETER = "INDEX";
-    private static final String COMMAND_EDIT_EXAMPLE = COMMAND_EDIT_WORD + " 1";
+    private static final String COMMAND_EDIT_EXAMPLE = COMMAND_EDIT_WORD + " 1 91234567";
 
     private static final String COMMAND_CLEAR_WORD = "clear";
     private static final String COMMAND_CLEAR_DESC = "Clears address book permanently.";
@@ -165,6 +165,11 @@ public class AddressBook {
      * If the first non-whitespace character in a user's input line is this, that line will be ignored.
      */
     private static final char INPUT_COMMENT_MARKER = '#';
+
+    /**
+     * If the first non-whitespace character in a user's input line is this, that line will be ignored.
+     */
+    private static final char EDIT_ARGS = '2';
 
     /*
      * This variable is declared for the whole class (instead of declaring it
@@ -526,14 +531,13 @@ public class AddressBook {
      * @return feedback display message for the operation result
      */
     private static String executeEditPerson(String commandArgs) {
-        if (!isDeletePersonArgsValid(commandArgs)) {
-            return getMessageForInvalidCommandInput(COMMAND_EDIT_WORD, getUsageInfoForDeleteCommand());
+        if (!isEditPersonArgsValid(commandArgs)) {
+            return getMessageForInvalidCommandInput(COMMAND_EDIT_WORD, getUsageInfoForEditCommand());
         }
         final int targetVisibleIndex = extractTargetIndexFromDeletePersonArgs(commandArgs);
         if (!isDisplayIndexValidForLastPersonListingView(targetVisibleIndex)) {
             return MESSAGE_INVALID_PERSON_DISPLAYED_INDEX;
         }
-        final String[] targetInModel = getPersonByLastVisibleIndex(targetVisibleIndex);
         return "lol";
         //return editPersonFromAddressBook(targetInModel) ? getMessageForSuccessfulDelete(targetInModel) // success
                 //: MESSAGE_PERSON_NOT_IN_ADDRESSBOOK; // not found
@@ -549,6 +553,16 @@ public class AddressBook {
         try {
             final int extractedIndex = Integer.parseInt(rawArgs.trim()); // use standard libraries to parse
             return extractedIndex >= DISPLAYED_INDEX_OFFSET;
+        } catch (NumberFormatException nfe) {
+            return false;
+        }
+    }
+
+    //lel
+    private static boolean isEditPersonArgsValid(String rawArgs) {
+        try {
+            final String[] extractedArgs = rawArgs.trim().split("\\s+"); // use standard libraries to parse
+            return extractedArgs.length >= EDIT_ARGS;
         } catch (NumberFormatException nfe) {
             return false;
         }
@@ -1137,6 +1151,12 @@ public class AddressBook {
         return String.format(MESSAGE_COMMAND_HELP, COMMAND_DELETE_WORD, COMMAND_DELETE_DESC) + LS
                 + String.format(MESSAGE_COMMAND_HELP_PARAMETERS, COMMAND_DELETE_PARAMETER) + LS
                 + String.format(MESSAGE_COMMAND_HELP_EXAMPLE, COMMAND_DELETE_EXAMPLE) + LS;
+    }
+    /** Returns the string for showing 'edit' command usage instruction */
+    private static String getUsageInfoForEditCommand() {
+        return String.format(MESSAGE_COMMAND_HELP, COMMAND_EDIT_WORD, COMMAND_EDIT_DESC) + LS
+                + String.format(MESSAGE_COMMAND_HELP_PARAMETERS, COMMAND_EDIT_PARAMETER) + LS
+                + String.format(MESSAGE_COMMAND_HELP_EXAMPLE, COMMAND_EDIT_EXAMPLE) + LS;
     }
 
     /** Returns string for showing 'clear' command usage instruction */
