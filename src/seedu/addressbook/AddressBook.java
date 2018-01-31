@@ -541,6 +541,7 @@ public class AddressBook {
         final String targetInModel = extractTargetNameFromEditPersonArgs(commandArgs);
         String[] old = ALL_PERSONS.get(targetVisibleIndex);
         old[0] = targetInModel;
+
         ALL_PERSONS.set(targetVisibleIndex - 3, old);
         savePersonsToFile(getAllPersonsInAddressBook(), storageFilePath);
         return getMessageForSuccessfulEdit(targetVisibleIndex, targetInModel);
